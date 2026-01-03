@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Fake Executor</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fafafa;
+}
+
+.python-output {
+    background: #f0f0f0;
+    padding: 6px;
+    margin: 4px 0;
+    border-left: 3px solid #444;
+    font-family: monospace;
+    display: inline-block;
+}
+
+h1{text-align:center; color:#8B008B; padding: 10px;}
+h3{text-align:center; color:#00008B;}
+p{text-align:center; color:#006400;}
+h4{text-align:center; color:red;}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+#conteudo, #conteudo1 {
+    padding: 15px;
+    margin: auto;
+    max-width: 600px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Jogar há poesia.</h1>
+
+<div id="conteudo">
+<h3>Poesia na hora por a criança infância.<br>
+<img src="https://img.freepik.com/fotos-premium/crianca-astronomo-com-oculos-olhando-para-as-estrelas-crianca-explorando-o-ceu-escuro-estrelado-gerar-ai_98402-106651.jpg"><br>
+
+<p>
+VERSO DA CRIANÇA<br><br>
+Criemos o começar<br>
+sempre em coração brilhar<br>
+Amor! Estranha forma de amar<br>
+num tanto acontecer.<br><br>
+Sou criança deixai-me libertar<br>
+ser livre.<br>
+Apenas Deus amar.<br>
+</p>
+
+<img src="https://tse1.mm.bing.net/th/id/OIP.QOUkNGECUe_xpS-KumUs5AHaLH?w=880&h=1321&rs=1&pid=ImgDetMain&o=7&rm=3"><br>
+
+<br>Dialogo de infância<br>
+</h3>
+</div>
+
+<div id="conteudo1">
+<h4>
+<python>
+print("Como foi a tua infância?<br>")
+print("Simples e feliz<br>")
+print("Que idade tens?<br>")
+print("Nasci em 1989<br>")
+b = 2025 - 1989
+print(b)
+print("anos")
+</python>
+</h4>
+</div>
+
+<script>
+// Python Fake reforçado e estável
+function executarPythonFake(texto) {
+    const regexPythonTag = /<python>([\s\S]*?)<\/python>/g;
+
+    texto = texto.replace(regexPythonTag, (match, code) => {
+        const linhas = code.split("\n");
+        let saida = "";
+        let vars = {};
+
+        for (let linha of linhas) {
+            linha = linha.trim();
+            if (linha === "") continue;
+
+            // Variáveis simples
+            if (linha.includes("=") && !linha.startsWith("print")) {
+                const partes = linha.split("=");
+                if (partes.length !== 2) return "[ERRO ao definir variável]";
+                const nome = partes[0].trim();
+                const valor = partes[1].trim();
+
+                try {
+                    vars[nome] = eval(valor);
+                } catch {
+                    return "[ERRO ao definir variável]";
+                }
+                continue;
+            }
+
+            // Apenas print()
+            if (!linha.startsWith("print(") || !linha.endsWith(")")) {
+                return "[ERRO: apenas print() ou variáveis simples são permitidos]";
+            }
+
+            let conteudo = linha.slice(6, -1).trim();
+
+            // Substituir variáveis
+            for (let v in vars) {
+                const regexVar = new RegExp("\\b" + v + "\\b", "g");
+                conteudo = conteudo.replace(regexVar, vars[v]);
+            }
+
+            try {
+                const resultado = eval(conteudo);
+                saida += resultado + "<br>";
+            } catch {
+                return "[ERRO ao interpretar print()]";
+            }
+        }
+
+        return `<span class="python-output">${saida.trim()}</span>`;
+    });
+
+    return texto;
+}
+
+// Processar automaticamente
+window.onload = () => {
+    document.querySelectorAll("div[id^='conteudo']").forEach(div => {
+        div.innerHTML = executarPythonFake(div.innerHTML);
+    });
+};
+</script>
+
+</body>
+</html>
